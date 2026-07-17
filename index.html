@@ -90,66 +90,23 @@ const Mesta_Teska = {
     "zeleznicka stanica": {x: 5, y: 3}
 };
 
-// INTERNI MAP: normName -> coords ; normToOriginal: normName -> original display name
-let _mestaNorm = {};
-let _normToOriginal = {};
+let mesta, trenutnaLokacija, cilj;
 
-let mestaSource; // original source object (Mesta_Laka ili Mesta_Teska)
-let trenutnaLokacija; // original display name
-let cilj;
-
-// ======= HELPERS =======
-function stripDiacritics(s) {
-  return s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
-}
-function normalizeName(s) {
-  return stripDiacritics(String(s)).toLowerCase().trim();
-}
-
-// Siguran log (sprečava XSS)
-function dodajULog(poruka, isError = false) {
-    const log = document.getElementById("log");
-    const div = document.createElement('div');
-    if (isError) div.classList.add('error-msg');
-    div.textContent = `> ${poruka}`;
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
-}
-
-// inicijalizuje interne mape sa normalizovanim ključevima
-function initMestaMap(sourceObj) {
-    _mestaNorm = {};
-    _normToOriginal = {};
-    for (const orig of Object.keys(sourceObj)) {
-        const norm = normalizeName(orig);
-        _mestaNorm[norm] = sourceObj[orig];
-        _normToOriginal[norm] = orig;
-    }
-}
-
-// ====== POKRETANJE IGRE ======
 function pokreniIgru(tezina) {
-    mestaSource = tezina === 'teska' ? Mesta_Teska : Mesta_Laka;
-    // Napravi interne mape
-    initMestaMap(mestaSource);
-
-    const originalKeys = Object.keys(mestaSource);
-    trenutnaLokacija = originalKeys[Math.floor(Math.random() * originalKeys.length)];
-    cilj = originalKeys[Math.floor(Math.random() * originalKeys.length)];
+    mesta = tezina === 'teska' ? Mesta_Teska : Mesta_Laka;
+    const sveLokacije = Object.keys(mesta);
+    
+    trenutnaLokacija = sveLokacije[Math.floor(Math.random() * sveLokacije.length)];
+    cilj = sveLokacije[Math.floor(Math.random() * sveLokacije.length)];
     while (cilj === trenutnaLokacija) {
-        cilj = originalKeys[Math.floor(Math.random() * originalKeys.length)];
+        cilj = sveLokacije[Math.floor(Math.random() * sveLokacije.length)];
     }
 
     document.getElementById("setup").style.display = "none";
     document.getElementById("game").style.display = "block";
-
-    // onemogući start dugmad da se ne pritisnu ponovo
-    document.querySelectorAll('#setup button').forEach(b => b.disabled = true);
-
+    
     osveziStatus();
     dodajULog("Igra je počela. Srećan put!");
-    // fokus na input
-    document.getElementById('komanda').focus();
 }
 
 function osveziStatus() {
@@ -157,35 +114,31 @@ function osveziStatus() {
     document.getElementById("lokacija-tekst").innerHTML = `Trenutno se nalaziš na: <strong>${trenutnaLokacija.toUpperCase()}</strong>`;
 }
 
-// normalizacija unosa i zamene za izgovorene brojeve linija
 function normalizujTekst(tekst) {
-    tekst = stripDiacritics(String(tekst)).toLowerCase().trim();
+    tekst = tekst.toLowerCase().trim();
     const zamene = {
         "osamnaesticom": "18", "osamnaest": "18",
-        "dvadesetseticom": "26", "dvadesetset": "26",
-        "sedamdesetdvojkom": "72", "sedamdesetdva": "72",
+        "dvadesetšesticom": "26", "dvadesetšest": "26",
         "jedinicom": "1", "dvojkom": "2", "devetkom": "9",
         "dvadesetdevetkom": "29", "dvadesetdevet": "29"
     };
     for (let [rec, broj] of Object.entries(zamene)) {
-        // global replace svih pojavljivanja
-        tekst = tekst.replace(new RegExp(rec, 'g'), broj);
+        tekst = tekst.replace(rec, broj);
     }
     return tekst;
 }
 
-// Parse komande vraća tip vozila (npr. "autobus") i odrediste (može biti originalni naziv ako je pronađen u padezima)
 function parseKomanda(unos) {
-    const unosNorm = normalizujTekst(unos);
+    unos = normalizujTekst(unos);
     
     let tipVozila = null;
-    if (unosNorm.includes("autobus") || unosNorm.includes("bus") || unosNorm.includes("18")) tipVozila = "autobus";
-    else if (unosNorm.includes("tramvaj") || unosNorm.includes("2")) tipVozila = "tramvaj";
-    else if (unosNorm.includes("trolejbus") || unosNorm.includes("trola") || unosNorm.includes("29")) tipVozila = "trolejbus";
+    if (unos.includes("autobus") || unos.includes("bus") || unos.includes("18")) tipVozila = "autobus";
+    else if (unos.includes("tramvaj") || unos.includes("2")) tipVozila = "tramvaj";
+    else if (unos.includes("trolejbus") || unos.includes("trola") || unos.includes("29")) tipVozila = "trolejbus";
 
     let odrediste = null;
-    if (unosNorm.includes("do ")) {
-        let deoIzaDo = unosNorm.split("do ")[1].trim();
+    if (unos.includes("do ")) {
+        let deoIzaDo = unos.split("do ")[1].trim();
         const padezi = {
             "narodnog pozorista": "narodno pozoriste", "narodnom pozoristu": "narodno pozoriste",
             "narodnog muzeja": "narodni muzej", "narodnom muzeju": "narodni muzej",
@@ -196,32 +149,20 @@ function parseKomanda(unos) {
             "kalemegdanske tvrdjave": "kalemegdanska tvrdjava", "kalemegdanu": "kalemegdanska tvrdjava",
             "zeleznicke stanice": "zeleznicka stanica", "zeleznickoj stanici": "zeleznicka stanica",
             "aerodroma": "aerodrom", "restorana": "restoran", "kafica": "kafic", 
-            "parka": "park", "sume": "šuma", "sume": "šuma", "fakulteta": "fakultet", 
+            "parka": "park", "šume": "šuma", "sume": "šuma", "fakulteta": "fakultet", 
             "bioskopa": "bioskop", "prodavnice": "prodavnica", "knjizare": "knjizara", "pijace": "pijaca"
         };
-        // Deo iza "do" je već normalizovan (bez dijakritike). Pokušaj pronaći padež i vratiti ORIGINALNI naziv ako postoji u source-u:
         for (let [padez, nominativ] of Object.entries(padezi)) {
             if (deoIzaDo.includes(padez)) {
-                odrediste = nominativ; // nominativ može sadržati diakritik; biće normalizovan prilikom provere
+                odrediste = nominativ;
                 break;
             }
         }
-        if (!odrediste) {
-            // pokušaj mapiranja direktno na originalne nazive: tražimo original koji sadrži deo
-            // prolazimo kroz mestaSource key-eve i upoređujemo normalizovano
-            for (const orig of Object.keys(mestaSource)) {
-                if (normalizeName(orig).includes(deoIzaDo)) {
-                    odrediste = orig;
-                    break;
-                }
-            }
-        }
-        if (!odrediste) odrediste = deoIzaDo; // poslednja opcija: sirovi string (normalizovan)
+        if (!odrediste) odrediste = deoIzaDo;
     }
     return { tipVozila, odrediste };
 }
 
-// ====== IZVRŠAVANJE KOMANDE ======
 function izvrsiKomandu() {
     const inputPolje = document.getElementById("komanda");
     const unos = inputPolje.value;
@@ -230,23 +171,14 @@ function izvrsiKomandu() {
     const unosNorm = normalizujTekst(unos);
     const { tipVozila, odrediste } = parseKomanda(unos);
     
-    // PEŠAČENJE
     if (unosNorm.includes("peske") || unosNorm.includes("pesacim")) {
-        if (!odrediste) {
-            dodajULog("Niste naveli odredište za pešačenje.", true);
-            inputPolje.value = "";
-            return;
-        }
-        const odNorm = normalizeName(odrediste);
-        if (odNorm in _mestaNorm) {
-            let p1 = _mestaNorm[ normalizeName(trenutnaLokacija) ];
-            let p2 = _mestaNorm[ odNorm ];
+        if (odrediste in mesta) {
+            let p1 = mesta[trenutnaLokacija];
+            let p2 = mesta[odrediste];
             let komsije = (Math.abs(p1.x - p2.x) === 1 && p1.y === p2.y) || (Math.abs(p1.y - p2.y) === 1 && p1.x === p2.x);
             
             if (komsije) {
-                // postavi originalno ime lokacije (ako imamo mapiranje)
-                const orig = _normToOriginal[odNorm] || odrediste;
-                trenutnaLokacija = orig;
+                trenutnaLokacija = odrediste;
                 dodajULog(`Stigao peške do: ${trenutnaLokacija.toUpperCase()}`);
             } else {
                 dodajULog("To mesto je isuviše daleko za pešačenje!", true);
@@ -255,30 +187,21 @@ function izvrsiKomandu() {
             dodajULog("Nepoznato odredište.", true);
         }
     } else {
-        // JAVNI PREVOZ
         if (!tipVozila || !odrediste) {
             dodajULog("Komanda nije jasna. Probaj npr. 'idi osamnaesticom do biblioteke'.", true);
             inputPolje.value = "";
             return;
         }
 
-        const odNorm = normalizeName(odrediste);
-        if (!(odNorm in _mestaNorm)) {
+        if (!(odrediste in mesta)) {
             dodajULog("To mesto ne postoji na mapi.", true);
             inputPolje.value = "";
             return;
         }
 
-        // Guard: da li imamo definisano vozilo za tipVozila
         let vozilo = VOZILA[tipVozila];
-        if (!vozilo) {
-            dodajULog("Ne mogu da prepoznam taj tip prevoza.", true);
-            inputPolje.value = "";
-            return;
-        }
-
-        let pTrenutna = _mestaNorm[ normalizeName(trenutnaLokacija) ];
-        let pOdrediste = _mestaNorm[ odNorm ];
+        let pTrenutna = mesta[trenutnaLokacija];
+        let pOdrediste = mesta[odrediste];
 
         // 1. Provera da li se trenutna lokacija nalazi na ruti ovog vozila
         if (pTrenutna[vozilo.fiksnaKoord] !== vozilo.fiksnaVrednost) {
@@ -294,19 +217,25 @@ function izvrsiKomandu() {
             return;
         }
 
-        // Ako prođe obe provere, uspešno se pomera — postavi originalni naziv
-        const orig = _normToOriginal[odNorm] || odrediste;
-        trenutnaLokacija = orig;
+        // Ako prođe obe provere, uspešno se pomera
+        trenutnaLokacija = odrediste;
         dodajULog(`Seli ste u ${vozilo.naziv} ${vozilo.oznaka} i stigli do: ${trenutnaLokacija.toUpperCase()}`);
     }
 
     osveziStatus();
     inputPolje.value = "";
 
-    if (normalizeName(trenutnaLokacija) === normalizeName(cilj)) {
+    if (trenutnaLokacija === cilj) {
         dodajULog("ČESTITAMO! Stigli ste na cilj!");
         document.getElementById("komanda").disabled = true;
     }
+}
+
+function dodajULog(poruka, isError = false) {
+    const log = document.getElementById("log");
+    const klasa = isError ? ' class="error-msg"' : '';
+    log.innerHTML += `<div${klasa}>> ${poruka}</div>`;
+    log.scrollTop = log.scrollHeight;
 }
 </script>
 
