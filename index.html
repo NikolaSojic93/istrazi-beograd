@@ -1,57 +1,127 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Beogradski istraživač – uči srpski kroz igru</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradska navigacija</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #2d5a3b; font-family: 'Segoe UI', 'Comic Sans MS', cursive, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .game-container { background: #f5f0d7; border-radius: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.5); padding: 1.5rem; max-width: 950px; width: 100%; margin: 1rem; display: flex; flex-direction: column; gap: 1rem; }
-    .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-    h1 { font-size: 1.8rem; color: #b45f2a; text-shadow: 2px 2px 0 #ffd966; }
-    .goal-box { background: #ffd966; color: #4a2c1a; padding: 0.3rem 1rem; border-radius: 2rem; font-weight: bold; font-size: 0.9rem; }
-    .mode-switch { display: flex; gap: 0.5rem; }
-    .mode-btn { padding: 0.5rem 1.2rem; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; background: #c0a080; color: white; transition: 0.2s; }
-    .mode-btn.active { background: #b45f2a; transform: scale(1.05); }
-    canvas { width: 100%; height: auto; background: #e3d7b5; border: 4px solid #8b6f4c; border-radius: 2rem; display: block; margin: 0 auto; box-shadow: inset 0 0 20px rgba(0,0,0,0.3); }
-    .chat-area { background: #fef9e3; border: 3px solid #b48b5a; border-radius: 1.5rem; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; max-height: 240px; }
-    .messages { flex: 1; overflow-y: auto; font-size: 0.95rem; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; }
-    .msg { padding: 0.4rem 0.8rem; border-radius: 1rem; max-width: 85%; word-break: break-word; }
-    .msg.user { align-self: flex-end; background: #b8d9b0; color: #1e3b20; }
-    .msg.npc { align-self: flex-start; background: #f3d9b1; color: #4a2c1a; }
-    .msg.system { align-self: center; background: #fff3cd; color: #856404; font-style: italic; font-size: 0.85rem; }
-    .input-row { display: flex; gap: 0.5rem; }
-    #userInput { flex: 1; padding: 0.6rem 1rem; border: 2px solid #b48b5a; border-radius: 2rem; font-size: 1rem; outline: none; }
-    .send-btn { background: #b45f2a; color: white; border: none; border-radius: 2rem; padding: 0.6rem 1.5rem; cursor: pointer; font-weight: bold; }
-    .yesno-btns { display: none; gap: 0.5rem; margin-top: 0.3rem; }
-    .yesno-btns button { background: #9cb071; border: none; color: white; padding: 0.4rem 1rem; border-radius: 1rem; cursor: pointer; }
-    .translation-hint { font-size: 0.85rem; color: #7a5d3c; }
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f0e6d3;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 700px;
+      padding: 10px;
+    }
+    canvas {
+      border: 2px solid #5a4a3a;
+      background: #faf3e6;
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .controls {
+      margin: 10px 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      background: #7b6b5b;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #5a4a3a;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #chat {
+      width: 100%;
+      max-width: 500px;
+      height: 150px;
+      background: #fffaf2;
+      border: 1px solid #b7a694;
+      border-radius: 8px;
+      overflow-y: auto;
+      padding: 8px;
+      margin-bottom: 8px;
+      font-size: 0.95em;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .msg {
+      margin: 4px 0;
+    }
+    .msg.npc { color: #4a3520; }
+    .msg.user { color: #2c5f2d; font-weight: bold; }
+    .msg.error { color: #b33; }
+    .msg.success { color: #2a7a2a; font-weight: bold; }
+
+    .input-area {
+      display: flex;
+      width: 100%;
+      max-width: 500px;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    #userInput {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #b7a694;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    #sendBtn {
+      background: #7b6b5b;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #yesnoDiv {
+      display: none;
+      margin: 5px 0;
+      gap: 8px;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
-
 <div class="game-container">
-  <div class="header">
-    <h1>🚶 Beogradski istraživač</h1>
-    <div class="goal-box" id="goalDisplay">🎯 Cilj: </div>
-    <div class="mode-switch">
-      <button id="easyModeBtn" class="mode-btn active">🌿 Laka verzija</button>
-      <button id="hardModeBtn" class="mode-btn">🏙️ Teška verzija</button>
-    </div>
+  <canvas id="mapCanvas" width="500" height="500"></canvas>
+  <div class="controls">
+    <button id="easyModeBtn">Laka mapa</button>
+    <button id="hardModeBtn">Teška mapa</button>
   </div>
-  <canvas id="mapCanvas" width="900" height="600" aria-label="Karta Beograda"></canvas>
-  <div class="translation-hint" id="translationHint">👆 Klikni na zgradu da vidiš prevod na engleski</div>
-  <div class="chat-area">
-    <div class="messages" id="messages" aria-live="polite"></div>
-    <div class="input-row">
-      <input type="text" id="userInput" placeholder="npr. idi levo, idi pravo, ulicom Prizrenska do trga..." autofocus>
-      <button class="send-btn" id="sendBtn">Pošalji</button>
-    </div>
-    <div class="yesno-btns" id="yesnoButtons">
-      <button id="yesBtn">Da</button>
-      <button id="noBtn">Ne</button>
-    </div>
+  <div id="chat"></div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Unesite komandu..." autofocus>
+    <button id="sendBtn">Pošalji</button>
+  </div>
+  <div id="yesnoDiv">
+    <span id="yesnoText"></span>
+    <button id="yesBtn">Da</button>
+    <button id="noBtn">Ne</button>
   </div>
 </div>
 
@@ -59,221 +129,266 @@
   (function() {
     const canvas = document.getElementById('mapCanvas');
     const ctx = canvas.getContext('2d');
-    const messagesDiv = document.getElementById('messages');
+    const messagesDiv = document.getElementById('chat');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
-    const yesnoDiv = document.getElementById('yesnoButtons');
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
-    const translationHint = document.getElementById('translationHint');
-    const goalDisplay = document.getElementById('goalDisplay');
+    const yesnoDiv = document.getElementById('yesnoDiv');
+    const yesnoText = document.getElementById('yesnoText');
 
-    let mode = 'easy';
-    let playerNode = null;
-    let playerOrientation = 0; // 0:sever, 1:istok, 2:jug, 3:zapad
-    let inVehicle = null;
+    // ---------- GAME STATE ----------
+    let currentMode = 'easy';   // 'easy' or 'hard'
+    let playerX, playerY;      // grid coordinates
+    let playerDir;             // 0: up (north), 1: right, 2: down, 3: left
+    let goalBuilding = null;   // object { name, genitive, ... }
+    let mapWidth, mapHeight;   // grid dimensions
+    let mapTiles;              // 2D array of tile types: 0=empty, 1=street, 2=building
+    let buildings = [];        // list of all building objects
+    let streets = [];          // list of street objects { name, instrumental, tiles: Set, buildings: [] }
+    let gameOver = false;
     let pendingCorrection = null;
-    let vehicles = [];
-    let goalBuilding = null;
-    let sequenceQueue = [];
-    let isProcessingSequence = false;
 
-    let nodes = [];
-    let edges = [];
-    let buildings = [];
-    let vehicleLines = [];
-
-    const orientationTexts = {
-      0: "severu ⬆️",
-      1: "istoku ➡️",
-      2: "jugu ⬇️",
-      3: "zapadu ⬅️"
-    };
-
-    function getNode(id) { return nodes.find(n => n.id === id); }
-    function getBuildingByNode(nodeId) { return buildings.find(b => b.nodeId === nodeId); }
-    function getEffectiveNode() { return inVehicle ? inVehicle.positionNode : playerNode; }
-
-    // Čišćenje reči za lakšu provaru padeža (skidanje uobičajenih nastavaka za genitiv/akuzativ)
-    function sanitizeForMatch(str) {
-      if (!str) return '';
-      return str.toLowerCase()
-        .trim()
-        .replace(/a$/, '')
-        .replace(/u$/, '')
-        .replace(/e$/, '')
-        .replace(/om$/, '')
-        .replace(/ii$/, 'i');
+    // Building definition helpers
+    function addBuilding(name, genitive, x, y, streetName) {
+      const b = { name, genitive, x, y, streetName };
+      buildings.push(b);
+      if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
+        mapTiles[y][x] = 2; // building tile
+      }
+      return b;
     }
 
-    function findBuildingByName(searchStr) {
-      const cleanSearch = sanitizeForMatch(searchStr);
-      if (cleanSearch.length < 2) return null;
-      return buildings.find(b => 
-        sanitizeForMatch(b.nameSr).includes(cleanSearch) || 
-        sanitizeForMatch(b.nameSrGen).includes(cleanSearch) || 
-        b.id.toLowerCase().includes(cleanSearch)
-      );
+    // Street definition: line of tiles, adds to map
+    function addStreet(name, instrumental, x1, y1, x2, y2) {
+      const tiles = new Set();
+      if (x1 === x2) { // vertical
+        const minY = Math.min(y1, y2), maxY = Math.max(y1, y2);
+        for (let y = minY; y <= maxY; y++) {
+          if (y >= 0 && y < mapHeight && x1 >= 0 && x1 < mapWidth) {
+            mapTiles[y][x1] = mapTiles[y][x1] === 0 ? 1 : mapTiles[y][x1]; // don't overwrite buildings
+            tiles.add(`${x1},${y}`);
+          }
+        }
+      } else if (y1 === y2) { // horizontal
+        const minX = Math.min(x1, x2), maxX = Math.max(x1, x2);
+        for (let x = minX; x <= maxX; x++) {
+          if (y1 >= 0 && y1 < mapHeight && x >= 0 && x < mapWidth) {
+            mapTiles[y1][x] = mapTiles[y1][x] === 0 ? 1 : mapTiles[y1][x];
+            tiles.add(`${x},${y1}`);
+          }
+        }
+      } else {
+        console.warn(`Diagonal street "${name}" ignored – only straight lines allowed.`);
+      }
+      streets.push({ name, instrumental, tiles, buildings: [] });
     }
 
-    function buildBaseMap() {
-      nodes = [
-        { id: 'zeleni_venac', x: 450, y: 540, label: 'Autobuska stanica' },
-        { id: 'terazije', x: 450, y: 420, label: 'Terazije' },
-        { id: 'narodni_muzej', x: 250, y: 420, label: 'Narodni muzej' }, // Novo mesto dole levo od terazija
-        { id: 'trg', x: 450, y: 300, label: 'Trg republike' },          // Centralno mesto
-        { id: 'slavija', x: 650, y: 420, label: 'Slavija' },
-        { id: 'autokomanda', x: 650, y: 300, label: 'Autokomanda' },
-        { id: 'vracar', x: 650, y: 180, label: 'Vračar (Hram)' },
-        { id: 'knez_mihailova', x: 250, y: 300, label: 'Knez Mihailova' },
-        { id: 'kalemegdan', x: 250, y: 180, label: 'Kalemegdan' },
-        { id: 'skadarlija', x: 450, y: 180, label: 'Skadarlija' },
-        { id: 'dorcol', x: 250, y: 540, label: 'Dorćol' }
-      ];
-
-      const streetDefs = [
-        { from: 'zeleni_venac', to: 'terazije', name: 'Prizrenska', orientation: 0 },
-        { from: 'terazije', to: 'trg', name: 'Kralja Milana', orientation: 0 },
-        { from: 'terazije', to: 'narodni_muzej', name: 'Trg Nikole Pašića', orientation: 3 },
-        { from: 'trg', to: 'skadarlija', name: 'Bulevar despota Stefana', orientation: 0 },
-        { from: 'terazije', to: 'slavija', name: 'Terazijska', orientation: 1 },
-        { from: 'slavija', to: 'autokomanda', name: 'Bulevar oslobođenja', orientation: 0 },
-        { from: 'autokomanda', to: 'vracar', name: 'Makenzijeva', orientation: 0 },
-        { from: 'terazije', to: 'dorcol', name: 'Balkanska', orientation: 3 },
-        { from: 'trg', to: 'knez_mihailova', name: 'Knez Mihailova', orientation: 3 },
-        { from: 'knez_mihailova', to: 'kalemegdan', name: 'Knez Mihailova (produžetak)', orientation: 0 },
-        { from: 'kalemegdan', to: 'skadarlija', name: 'Cara Dušana', orientation: 1 },
-        { from: 'skadarlija', to: 'vracar', name: 'Džordža Vašingtona', orientation: 1 },
-        { from: 'knez_mihailova', to: 'autokomanda', name: 'Resavska', orientation: 1 }
-      ];
-
-      buildings = [
-        { id: 'stanica', nameSr: 'Autobuska stanica', nameSrGen: 'autobuske stanice', nameEn: 'Bus Station', nodeId: 'zeleni_venac' },
-        { id: 'pozoriste', nameSr: 'Pozorište', nameSrGen: 'pozorišta', nameEn: 'Theatre', nodeId: 'terazije' },
-        { id: 'muzej', nameSr: 'Narodni muzej', nameSrGen: 'Narodnog muzeja', nameEn: 'National Museum', nodeId: 'narodni_muzej' },
-        { id: 'trg_rep', nameSr: 'Trg republike', nameSrGen: 'Trga republike', nameEn: 'Republic Square', nodeId: 'trg' },
-        { id: 'biblioteka', nameSr: 'Narodna biblioteka', nameSrGen: 'Narodne biblioteke', nameEn: 'National Library', nodeId: 'skadarlija' },
-        { id: 'trzni_centar', nameSr: 'Tržni centar', nameSrGen: 'tržnog centra', nameEn: 'Shopping Centre', nodeId: 'slavija' },
-        { id: 'skola', nameSr: 'Osnovna škola', nameSrGen: 'Osnovne škole', nameEn: 'Primary School', nodeId: 'vracar' },
-        { id: 'galerija', nameSr: 'Galerija', nameSrGen: 'galerije', nameEn: 'Gallery', nodeId: 'knez_mihailova' },
-        { id: 'park', nameSr: 'Kalemegdanska tvrđava', nameSrGen: 'Kalemegdanske tvrđave', nameEn: 'Kalemegdan Fortress', nodeId: 'kalemegdan' }
-      ];
-
-      streetDefs.forEach(s => {
-        edges.push({ from: s.from, to: s.to, orientation: s.orientation, name: s.name });
-        edges.push({ from: s.to, to: s.from, orientation: (s.orientation + 2) % 4, name: s.name });
-      });
-    }
-
+    // ---------- MAP CONSTRUCTION ----------
     function buildEasyMap() {
-      nodes = []; edges = []; buildings = [];
-      buildBaseMap();
-      playerNode = 'zeleni_venac';
-      playerOrientation = 0; 
-      inVehicle = null;
-      vehicles = [];
-      pickNewGoal();
+      mapWidth = 7;
+      mapHeight = 7;
+      mapTiles = Array.from({ length: mapHeight }, () => Array(mapWidth).fill(0));
+      buildings = [];
+      streets = [];
+
+      // Vertical main street: Kralja Milana (full height)
+      addStreet('Kralja Milana', 'Kralja Milana ulicom', 3, 0, 3, 6);
+      // Horizontal main street: Knez Mihailova (full width)
+      addStreet('Knez Mihailova', 'Knez Mihailovom ulicom', 0, 3, 6, 3);
+
+      // Buildings
+      addBuilding('Autobuska stanica', 'autobuske stanice', 3, 6, 'Kralja Milana');
+      addBuilding('Narodna biblioteka', 'narodne biblioteke', 3, 0, 'Kralja Milana');
+      addBuilding('Parking', 'parkinga', 0, 3, 'Knez Mihailova');
+      addBuilding('Galerija', 'galerije', 3, 3, 'Kralja Milana'); // at intersection
+
+      // Set player start
+      playerX = 3; playerY = 6; playerDir = 0; // north
+      goalBuilding = randomBuildingExcept('Autobuska stanica');
     }
 
     function buildHardMap() {
-      nodes = []; edges = []; buildings = [];
-      buildBaseMap();
-      mode = 'hard';
+      mapWidth = 15;
+      mapHeight = 15;
+      mapTiles = Array.from({ length: mapHeight }, () => Array(mapWidth).fill(0));
+      buildings = [];
+      streets = [];
 
-      // Ekspanzija mape sa novim lokacijama na obodima
-      const hardNodes = [
-        { id: 'aerodrom', x: 50, y: 60, label: 'Aerodrom' },               // Skroz gore levo
-        { id: 'zeleznicka', x: 850, y: 60, label: 'Železnička stanica' },   // Skroz gore desno
-        { id: 'pijaca', x: 250, y: 60, label: 'Pijaca' },
-        { id: 'bioskop', x: 450, y: 60, label: 'Bioskop' },
-        { id: 'restoran', x: 650, y: 60, label: 'Restoran' },
-        { id: 'kafic', x: 50, y: 180, label: 'Kafić' },
-        { id: 'suma', x: 850, y: 180, label: 'Šuma' },
-        { id: 'parking', x: 50, y: 300, label: 'Parking' },
-        { id: 'stadion', x: 850, y: 300, label: 'Stadion' },
-        { id: 'banka', x: 50, y: 420, label: 'Banka' }
-      ];
-      hardNodes.forEach(n => nodes.push(n));
+      // Vertical streets (full height)
+      addStreet('Kralja Milana', 'Kralja Milana ulicom', 5, 0, 5, 14);
+      addStreet('Francuska', 'Francuskom ulicom', 2, 0, 2, 14);
+      addStreet('Beogradska', 'Beogradskom ulicom', 8, 0, 8, 14);
+      addStreet('Nemanjina', 'Nemanjinom ulicom', 12, 0, 12, 14);
+      // Far left and right vertical edges
+      addStreet('Vojvode Stepe', 'Vojvode Stepe ulicom', 0, 0, 0, 14);
+      addStreet('Cara Dušana', 'Cara Dušana ulicom', 14, 0, 14, 14);
 
-      const hardStreets = [
-        { from: 'kalemegdan', to: 'pijaca', name: 'Dunavska ulica', orientation: 0 },
-        { from: 'pijaca', to: 'aerodrom', name: 'Auto-put', orientation: 3 },
-        { from: 'pijaca', to: 'bioskop', name: 'Francuska ulica', orientation: 1 },
-        { from: 'skadarlija', to: 'bioskop', name: 'Džordža Vašingtona', orientation: 0 },
-        { from: 'bioskop', to: 'restoran', name: 'Bulevar kralja Aleksandra', orientation: 1 },
-        { from: 'vracar', to: 'restoran', name: 'Beogradska', orientation: 0 },
-        { from: 'restoran', to: 'zeleznicka', name: 'Ruzveltova', orientation: 1 },
-        { from: 'kalemegdan', to: 'kafic', name: 'Pariska ulica', orientation: 3 },
-        { from: 'vracar', to: 'suma', name: 'Mije Kovačevića', orientation: 1 },
-        { from: 'knez_mihailova', to: 'parking', name: 'Pop Lukina', orientation: 3 },
-        { from: 'autokomanda', to: 'stadion', name: 'Ljutice Bogdana', orientation: 1 },
-        { from: 'narodni_muzej', to: 'banka', name: 'Kneza Miloša', orientation: 3 }
-      ];
+      // Horizontal streets (full width)
+      addStreet('Knez Mihailova', 'Knez Mihailovom ulicom', 0, 5, 14, 5);
+      addStreet('Bulevar kralja Aleksandra', 'Bulevarom kralja Aleksandra', 0, 2, 14, 2);
+      addStreet('Takovska', 'Takovski ulicom', 0, 9, 14, 9);
 
-      hardStreets.forEach(s => {
-        edges.push({ from: s.from, to: s.to, orientation: s.orientation, name: s.name });
-        edges.push({ from: s.to, to: s.from, orientation: (s.orientation + 2) % 4, name: s.name });
+      // Buildings
+      addBuilding('Autobuska stanica', 'autobuske stanice', 5, 14, 'Kralja Milana');
+      addBuilding('Bioskop', 'bioskopa', 5, 0, 'Kralja Milana');
+      addBuilding('Parking', 'parkinga', 0, 5, 'Knez Mihailova');
+      addBuilding('Stadion', 'stadiona', 14, 5, 'Knez Mihailova');
+      addBuilding('Galerija', 'galerije', 5, 5, 'Kralja Milana');
+      addBuilding('Osnovna škola', 'osnovne škole', 2, 9, 'Francuska');
+      addBuilding('Bolnica', 'bolnice', 8, 2, 'Beogradska');
+      addBuilding('Pozorište', 'pozorišta', 12, 5, 'Nemanjina');
+
+      playerX = 5; playerY = 14; playerDir = 0;
+      goalBuilding = randomBuildingExcept('Autobuska stanica');
+    }
+
+    function randomBuildingExcept(excludeName) {
+      const filtered = buildings.filter(b => b.name !== excludeName);
+      if (filtered.length === 0) return buildings[0];
+      return filtered[Math.floor(Math.random() * filtered.length)];
+    }
+
+    // After building map, link buildings to streets
+    function linkBuildingsToStreets() {
+      streets.forEach(s => s.buildings = []);
+      buildings.forEach(b => {
+        const s = streets.find(st => st.name === b.streetName);
+        if (s) s.buildings.push(b);
       });
-
-      const hardBuildings = [
-        { id: 'aerodrom', nameSr: 'Aerodrom', nameSrGen: 'aerodroma', nameEn: 'Airport', nodeId: 'aerodrom' },
-        { id: 'zeleznicka', nameSr: 'Železnička stanica', nameSrGen: 'Železničke stanice', nameEn: 'Railway Station', nodeId: 'zeleznicka' },
-        { id: 'pijaca', nameSr: 'Pijaca', nameSrGen: 'pijace', nameEn: 'Green Market', nodeId: 'pijaca' },
-        { id: 'bioskop', nameSr: 'Bioskop', nameSrGen: 'bioskopa', nameEn: 'Cinema', nodeId: 'bioskop' },
-        { id: 'restoran', nameSr: 'Restoran', nameSrGen: 'restorana', nameEn: 'Restaurant', nodeId: 'restoran' },
-        { id: 'kafic', nameSr: 'Kafić', nameSrGen: 'kafića', nameEn: 'Café', nodeId: 'kafic' },
-        { id: 'suma', nameSr: 'Šuma', nameSrGen: 'šume', nameEn: 'Forest', nodeId: 'suma' },
-        { id: 'parking', nameSr: 'Parking', nameSrGen: 'parkinga', nameEn: 'Parking Lot', nodeId: 'parking' },
-        { id: 'stadion', nameSr: 'Stadion', nameSrGen: 'stadiona', nameEn: 'Stadium', nodeId: 'stadion' },
-        { id: 'banka', nameSr: 'Banka', nameSrGen: 'banke', nameEn: 'Bank', nodeId: 'banka' }
-      ];
-      hardBuildings.forEach(b => buildings.push(b));
-
-      // Vozila i njihove rute kroz proširenu mapu
-      vehicleLines = [
-        { id: 'bus18', type: 'autobus', color: '#1e4d8c', number: '18', stops: ['zeleni_venac', 'terazije', 'trg', 'skadarlija', 'bioskop', 'pijaca'] },
-        { id: 'trolley29', type: 'trolejbus', color: '#e87722', number: '29', stops: ['kalemegdan', 'knez_mihailova', 'trg', 'terazije', 'slavija'] },
-        { id: 'tram2', type: 'tramvaj', color: '#2d6a4f', number: '2', stops: ['dorcol', 'terazije', 'trg', 'knez_mihailova', 'kalemegdan', 'pijaca', 'aerodrom'] },
-        { id: 'bus33', type: 'autobus', color: '#8b2d2d', number: '33', stops: ['autokomanda', 'vracar', 'restoran', 'zeleznicka'] }
-      ];
-
-      vehicles = vehicleLines.map(line => ({
-        ...line,
-        currentStopIndex: 0,
-        positionNode: line.stops[0]
-      }));
-
-      playerNode = 'zeleni_venac';
-      playerOrientation = 0;
-      inVehicle = null;
-      pickNewGoal();
     }
 
-    function pickNewGoal() {
-      const available = buildings.filter(b => b.nodeId !== 'zeleni_venac' && b.nodeId !== getEffectiveNode());
-      if (available.length > 0) {
-        goalBuilding = available[Math.floor(Math.random() * available.length)];
-      } else {
-        goalBuilding = buildings[3];
+    function buildMap(mode) {
+      if (mode === 'easy') buildEasyMap();
+      else buildHardMap();
+      linkBuildingsToStreets();
+    }
+
+    // ---------- DRAWING ----------
+    function drawMap() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cellW = canvas.width / mapWidth;
+      const cellH = canvas.height / mapHeight;
+
+      // Draw streets
+      ctx.strokeStyle = '#a09080';
+      ctx.lineWidth = Math.max(2, cellW * 0.4);
+      for (let y = 0; y < mapHeight; y++) {
+        for (let x = 0; x < mapWidth; x++) {
+          if (mapTiles[y][x] >= 1) {
+            // Draw a lighter background for streets
+            ctx.fillStyle = '#e8dccc';
+            ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
+            // Draw lines between adjacent street tiles (simplified: draw crosses)
+          }
+        }
       }
-      updateGoalDisplay();
-    }
-
-    function updateGoalDisplay() {
-      if (goalBuilding) {
-        goalDisplay.textContent = `🎯 Cilj: ${goalBuilding.nameSr} (${goalBuilding.nameEn})`;
+      // Draw street lines as continuous paths
+      const drawn = new Set();
+      for (const street of streets) {
+        ctx.strokeStyle = '#8b7a6b';
+        ctx.lineWidth = Math.max(2, cellW * 0.3);
+        ctx.beginPath();
+        // Convert tile set to sorted coordinates and draw line
+        const pts = Array.from(street.tiles).map(s => s.split(',').map(Number));
+        if (pts.length === 0) continue;
+        // Determine if vertical or horizontal
+        const xs = pts.map(p => p[0]);
+        const ys = pts.map(p => p[1]);
+        const uniqueX = [...new Set(xs)];
+        const uniqueY = [...new Set(ys)];
+        if (uniqueX.length === 1) {
+          // vertical: draw line from minY to maxY
+          const x = uniqueX[0];
+          const minY = Math.min(...ys);
+          const maxY = Math.max(...ys);
+          ctx.moveTo((x + 0.5) * cellW, (minY + 0.5) * cellH);
+          ctx.lineTo((x + 0.5) * cellW, (maxY + 0.5) * cellH);
+        } else if (uniqueY.length === 1) {
+          // horizontal
+          const y = uniqueY[0];
+          const minX = Math.min(...xs);
+          const maxX = Math.max(...xs);
+          ctx.moveTo((minX + 0.5) * cellW, (y + 0.5) * cellH);
+          ctx.lineTo((maxX + 0.5) * cellW, (y + 0.5) * cellH);
+        }
+        ctx.stroke();
       }
+
+      // Draw buildings
+      for (const b of buildings) {
+        const cx = (b.x + 0.5) * cellW;
+        const cy = (b.y + 0.5) * cellH;
+        ctx.fillStyle = '#4d3e2e';
+        ctx.fillRect(cx - cellW * 0.35, cy - cellH * 0.35, cellW * 0.7, cellH * 0.7);
+        ctx.fillStyle = 'white';
+        ctx.font = `${Math.max(8, cellW * 0.25)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.name.substring(0, 3), cx, cy);
+      }
+
+      // Draw player (triangle pointing in direction)
+      const px = (playerX + 0.5) * cellW;
+      const py = (playerY + 0.5) * cellH;
+      ctx.fillStyle = '#c0392b';
+      ctx.beginPath();
+      const rad = Math.min(cellW, cellH) * 0.35;
+      if (playerDir === 0) { // up
+        ctx.moveTo(px, py - rad);
+        ctx.lineTo(px - rad * 0.8, py + rad * 0.5);
+        ctx.lineTo(px + rad * 0.8, py + rad * 0.5);
+      } else if (playerDir === 1) { // right
+        ctx.moveTo(px + rad, py);
+        ctx.lineTo(px - rad * 0.5, py - rad * 0.8);
+        ctx.lineTo(px - rad * 0.5, py + rad * 0.8);
+      } else if (playerDir === 2) { // down
+        ctx.moveTo(px, py + rad);
+        ctx.lineTo(px - rad * 0.8, py - rad * 0.5);
+        ctx.lineTo(px + rad * 0.8, py - rad * 0.5);
+      } else if (playerDir === 3) { // left
+        ctx.moveTo(px - rad, py);
+        ctx.lineTo(px + rad * 0.5, py - rad * 0.8);
+        ctx.lineTo(px + rad * 0.5, py + rad * 0.8);
+      }
+      ctx.closePath();
+      ctx.fill();
     }
 
-    function canMoveInOrientation(orient) {
-      const nodeId = getEffectiveNode();
-      return edges.some(e => e.from === nodeId && e.orientation === orient);
+    // ---------- MESSAGING ----------
+    function npcMsg(text) {
+      appendMessage('npc', text);
+    }
+    function userMsg(text) {
+      appendMessage('user', text);
+    }
+    function errorMsg(text) {
+      appendMessage('error', text);
+    }
+    function successMsg(text) {
+      appendMessage('success', text);
+    }
+    function appendMessage(cls, text) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + cls;
+      div.textContent = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    function moveInOrientation(orient) {
-      const edge = edges.find(e => e.from === getEffectiveNode() && e.orientation === orient);
-      if (edge && !inVehicle) {
-        playerNode = edge.to;
+    // ---------- MOVEMENT & QUEUE ----------
+    let sequenceQueue = [];
+    let isProcessingSequence = false;
+
+    function moveStep(dir) {
+      const dx = [0, 1, 0, -1];
+      const dy = [-1, 0, 1, 0];
+      const nx = playerX + dx[dir];
+      const ny = playerY + dy[dir];
+      if (nx >= 0 && nx < mapWidth && ny >= 0 && ny < mapHeight && mapTiles[ny][nx] >= 1) {
+        playerX = nx; playerY = ny;
+        playerDir = dir;
+        drawMap();
         checkGoal();
         return true;
       }
@@ -281,534 +396,189 @@
     }
 
     function checkGoal() {
-      if (!goalBuilding) return;
-      if (getEffectiveNode() === goalBuilding.nodeId) {
-        npcMsg(`🎉 Bravo! Stigao/la si do ${goalBuilding.nameSrGen} (${goalBuilding.nameEn}). +10 poena!`);
-        pickNewGoal();
-        npcMsg(`Sledeći cilj: ${goalBuilding.nameSr}.`);
+      if (goalBuilding && playerX === goalBuilding.x && playerY === goalBuilding.y && !gameOver) {
+        gameOver = true;
+        successMsg(`Stigli ste do ${goalBuilding.name}! Hvala na pomoći!`);
+        userInput.disabled = true;
+        sendBtn.disabled = true;
       }
     }
 
-    const directionWords = { 'pravo': 'forward', 'napred': 'forward', 'levo': 'turnLeft', 'lijevo': 'turnLeft', 'desno': 'turnRight', 'nazad': 'goBack', 'natrag': 'goBack' };
-    const numberWords = { 'jednu':1,'jedan':1,'dve':2,'dva':2,'tri':3,'četiri':4,'pet':5 };
-
-    function tokenize(input) {
-      return input.trim().toLowerCase().replace(/[?!,.]/g,'').split(/\s+/);
-    }
-
-    function parseSingleCommand(tokens, rawInput) {
-      const clean = tokens.filter(t => !['molim','te','vas','malo','odmah','sada','polako','idi','idite'].includes(t));
-      if (clean.length === 0) return null;
-      if (['pomoć','help','komande'].some(w => clean.includes(w))) return { action:'help' };
-      if (['pogledaj','gde','šta'].some(w => clean.includes(w))) return { action:'look' };
-
-      const rawLower = rawInput.toLowerCase();
-
-      // Formula: "ulicom [ime] do [zgrade]"
-      if (rawLower.includes('ulicom')) {
-        const ulicaMatch = rawInput.match(/ulicom\s+(.*?)\s+do\s+(.*)/i);
-        if (ulicaMatch) {
-          return { action: 'followStreet', street: ulicaMatch[1].trim().toLowerCase(), target: ulicaMatch[2].trim() };
-        }
-      }
-
-      // Formula za napredni prevoz: "idi [dvojkom/busom 18/linijom 29] do [bioskopa/zgrade]" ili "... [X] stanice"
-      if (mode === 'hard' && (rawLower.includes('idi') || rawLower.includes('vozi')) && (rawLower.includes('stanic') || rawLower.includes('do'))) {
-        let vNumber = null;
-        if (rawLower.includes('dvojkom') || rawLower.includes('brojem 2') || rawLower.includes(' dvoji ')) vNumber = '2';
-        else if (rawLower.includes('18')) vNumber = '18';
-        else if (rawLower.includes('29')) vNumber = '29';
-        else if (rawLower.includes('33')) vNumber = '33';
-
-        if (vNumber) {
-          if (rawLower.includes(' stanic')) {
-            // traženje broja stanica
-            let count = 1;
-            for (const [w, n] of Object.entries(numberWords)) {
-              if (clean.includes(w)) { count = n; break; }
-            }
-            const numMatch = rawLower.match(/(\d+)\s+stanic/);
-            if (numMatch) count = parseInt(numMatch[1], 10);
-            return { action: 'directVehicleTravel', number: vNumber, count: count };
-          } else {
-            // traženje ciljne zgrade
-            const doMatch = rawInput.match(/do\s+(.*)/i);
-            if (doMatch) {
-              return { action: 'directVehicleToTarget', number: vNumber, target: doMatch[1].trim() };
-            }
+    async function processSequence() {
+      if (isProcessingSequence) return;
+      isProcessingSequence = true;
+      while (sequenceQueue.length > 0 && !gameOver) {
+        const cmd = sequenceQueue.shift();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        if (cmd === 'napred') {
+          if (!moveStep(playerDir)) {
+            npcMsg('Ne mogu ići napred – ispred je prepreka.');
+            sequenceQueue = [];
+            break;
           }
+        } else if (cmd === 'levo') {
+          playerDir = (playerDir + 3) % 4;
+          drawMap();
+        } else if (cmd === 'desno') {
+          playerDir = (playerDir + 1) % 4;
+          drawMap();
         }
       }
+      isProcessingSequence = false;
+    }
 
-      // Standardne komande kretanja
-      for (const [dir, action] of Object.entries(directionWords)) {
-        if (clean.includes(dir)) return { action };
+    function processCommand(input) {
+      if (gameOver) return;
+      const lower = input.toLowerCase().trim();
+
+      // New command: "idi [ulica] do [zgrada]"
+      const match = lower.match(/^idi (.+?) do (.+)$/);
+      if (match) {
+        const streetPhrase = match[1].trim();
+        const destPhrase = match[2].trim();
+        handleGoToCommand(streetPhrase, destPhrase);
+        return;
       }
 
-      // Standardne bazične komande za vozila u teškom modu
-      if (mode === 'hard') {
-        const uciIdx = clean.indexOf('ući');
-        if (uciIdx !== -1 && clean[uciIdx+1] === 'u') {
-          const typeWord = clean[uciIdx+2];
-          const typeMap = { 'autobus':'autobus','bus':'autobus','trolejbus':'trolejbus','trola':'trolejbus','tramvaj':'tramvaj','tram':'tramvaj' };
-          if (typeMap[typeWord]) {
-            let number = null;
-            const brojIdx = clean.indexOf('broj');
-            if (brojIdx !== -1 && clean[brojIdx+1]) number = clean[brojIdx+1];
-            return { action:'enterVehicle', vehicleType: typeMap[typeWord], number };
-          }
-        }
-        if (clean.includes('izađi')) {
-          const kodIdx = clean.indexOf('kod');
-          let buildingName = null;
-          if (kodIdx !== -1 && clean.slice(kodIdx+1).length > 0) buildingName = clean.slice(kodIdx+1).join(' ');
-          return { action:'exitVehicle', buildingName };
-        }
-        const voziIdx = clean.findIndex(t => t === 'vozi' || t === 'voziti');
-        if (voziIdx !== -1 && clean[voziIdx+1] === 'se') {
-          const countWord = clean[voziIdx+2];
-          if (countWord && (numberWords[countWord] || /^\d+$/.test(countWord))) {
-            const num = numberWords[countWord] || parseInt(countWord,10);
-            if (num) return { action:'travelStops', count: num };
-          }
-        }
-      }
-      return null;
-    }
-
-    function parseSequence(input) {
-      const parts = input.split(/\s+(?:pa|zatim|onda|i)\s+/);
-      return parts.map(p => tokenize(p)).filter(t => t.length > 0);
-    }
-
-    function addMessage(sender,text){
-      const d=document.createElement('div');
-      d.className=`msg ${sender}`;
-      d.textContent=text;
-      messagesDiv.appendChild(d);
-      messagesDiv.scrollTop=messagesDiv.scrollHeight;
-    }
-    function npcMsg(t){addMessage('npc',t);}
-    function userMsg(t){addMessage('user',t);}
-
-    function describeLocation(){
-      const nodeId = getEffectiveNode();
-      const b = getBuildingByNode(nodeId);
-      const smer = orientationTexts[playerOrientation];
-      if(b) return `Nalaziš se kod ${b.nameSrGen} (${b.nameEn}). Gledaš ka ${smer}.`;
-      return `Nalaziš se na raskrsnici. Gledaš ka ${smer}.`;
-    }
-
-    function showHelp(){
-      if(mode==='easy'){
-        npcMsg('Komande: "idi pravo", "idi levo", "idi desno", "idi nazad", "ulicom [Ime] do [Zgrade]", "pogledaj".');
+      // Basic movement commands
+      if (lower === 'napred' || lower === 'idi napred') {
+        userMsg('Idi napred');
+        sequenceQueue.push('napred');
+        processSequence();
+      } else if (lower === 'levo' || lower === 'skreni levo') {
+        userMsg('Skreni levo');
+        sequenceQueue.push('levo');
+        processSequence();
+      } else if (lower === 'desno' || lower === 'skreni desno') {
+        userMsg('Skreni desno');
+        sequenceQueue.push('desno');
+        processSequence();
       } else {
-        npcMsg('Komande: Sve bazične + "idi dvojkom do bioskopa", "idi busom 18 tri stanice", "ući u autobus", "izađi".');
+        npcMsg('Nisam razumeo komandu. Pokušaj: napred, levo, desno, ili "idi [ulica] do [zgrada]".');
       }
     }
 
-    function executeCommand(parsedCmd) {
-      if (!parsedCmd) return;
-      if (parsedCmd.action === 'help') { showHelp(); return; }
-      if (parsedCmd.action === 'look') { npcMsg(describeLocation()); return; }
-      
-      if (inVehicle && ['forward', 'turnLeft', 'turnRight', 'goBack', 'followStreet'].includes(parsedCmd.action)) {
-        npcMsg('Prvo moraš izaći iz vozila.');
+    function handleGoToCommand(streetPhrase, destPhrase) {
+      userMsg(`idi ${streetPhrase} do ${destPhrase}`);
+
+      // Extract street name by removing "ulicom" or ending
+      let streetKey = streetPhrase.replace(/\s+ulicom$/i, '').trim();
+      // Map instrumental forms to nominative
+      const instrMap = {
+        'knez mihailovom': 'Knez Mihailova',
+        'francuskom': 'Francuska',
+        'beogradskom': 'Beogradska',
+        'nemanjinom': 'Nemanjina',
+        'vojvode stepe': 'Vojvode Stepe',
+        'cara dušana': 'Cara Dušana',
+        'bulevarom kralja aleksandra': 'Bulevar kralja Aleksandra',
+        'takovski': 'Takovska',
+        'kralja milana': 'Kralja Milana'
+      };
+      const streetName = instrMap[streetKey.toLowerCase()] || streetKey;
+
+      const street = streets.find(s => s.name.toLowerCase() === streetName.toLowerCase());
+      if (!street) {
+        errorMsg(`Izvini, ne prepoznajem ulicu "${streetName}".`);
         return;
       }
 
-      if (parsedCmd.action === 'forward') {
-        if (canMoveInOrientation(playerOrientation)) {
-          moveInOrientation(playerOrientation);
-          npcMsg('Idem pravo. ✔️ ' + describeLocation());
-        } else {
-          npcMsg('Ne mogu pravo, ispred je kraj puta.');
-        }
-      }
-      else if (parsedCmd.action === 'turnLeft') {
-        const targetOrient = (playerOrientation + 3) % 4;
-        if (canMoveInOrientation(targetOrient)) {
-          playerOrientation = targetOrient;
-          moveInOrientation(playerOrientation);
-          npcMsg('Skrećem levo i pravim korak. ↩️ ' + describeLocation());
-        } else {
-          npcMsg('Ne mogu skrenuti levo, tamo nema puta.');
-        }
-      }
-      else if (parsedCmd.action === 'turnRight') {
-        const targetOrient = (playerOrientation + 1) % 4;
-        if (canMoveInOrientation(targetOrient)) {
-          playerOrientation = targetOrient;
-          moveInOrientation(playerOrientation);
-          npcMsg('Skrećem desno i pravim korak. ↪️ ' + describeLocation());
-        } else {
-          npcMsg('Ne mogu skrenuti desno, tamo nema puta.');
-        }
-      }
-      else if (parsedCmd.action === 'goBack') {
-        const targetOrient = (playerOrientation + 2) % 4;
-        if (canMoveInOrientation(targetOrient)) {
-          playerOrientation = targetOrient;
-          moveInOrientation(playerOrientation);
-          npcMsg('Idem unazad. ⬇️ ' + describeLocation());
-        } else {
-          npcMsg('Ne mogu nazad, iza je zid/kraj puta.');
-        }
-      }
-      else if (parsedCmd.action === 'followStreet') {
-        const currentId = getEffectiveNode();
-        const edge = edges.find(e => e.from === currentId && e.name.toLowerCase().includes(parsedCmd.street));
-        if (!edge) {
-          npcMsg(`Ulica "${parsedCmd.street}" ne polazi sa tvoje trenutne lokacije.`);
-          return;
-        }
-        
-        const targetBuilding = findBuildingByName(parsedCmd.target);
-        if (!targetBuilding) {
-          npcMsg(`Ne znam gde se nalazi lokacija "${parsedCmd.target}".`);
-          return;
-        }
-
-        if (edge.to === targetBuilding.nodeId) {
-          playerOrientation = edge.orientation;
-          playerNode = edge.to;
-          npcMsg(`Idem ulicom ${edge.name} do cilja. 🚶 ` + describeLocation());
-          checkGoal();
-        } else {
-          npcMsg(`Ulica ${edge.name} ne vodi direktno do te lokacije.`);
-        }
-      }
-      // DIREKTNE LINIJE FRAZA ZA VOZILA (npr: "idi dvojkom do...")
-      else if (parsedCmd.action === 'directVehicleToTarget') {
-        const targetBuilding = findBuildingByName(parsedCmd.target);
-        if (!targetBuilding) {
-          npcMsg(`Ne znam gde se nalazi lokacija "${parsedCmd.target}".`);
-          return;
-        }
-        const v = vehicles.find(veh => veh.number === parsedCmd.number);
-        if (!v) return;
-
-        const currentIdx = v.stops.indexOf(getEffectiveNode());
-        const targetIdx = v.stops.indexOf(targetBuilding.nodeId);
-
-        if (targetIdx === -1) {
-          npcMsg(`Izvini, linija ${v.number} ne ide do te lokacije.`);
-          return;
-        }
-        if (currentIdx === -1) {
-          npcMsg(`Linija ${v.number} ne prolazi kroz tvoju trenutnu stanicu.`);
-          return;
-        }
-
-        inVehicle = v;
-        v.currentStopIndex = targetIdx;
-        v.positionNode = targetBuilding.nodeId;
-        playerNode = targetBuilding.nodeId;
-        inVehicle = null; // Automatski izlazi na odredištu
-        npcMsg(`Ulaziš u vozilo ${v.number} i voziš se direktno do stanice: ${targetBuilding.nameSr}.`);
-        checkGoal();
-      }
-      else if (parsedCmd.action === 'directVehicleTravel') {
-        const v = vehicles.find(veh => veh.number === parsedCmd.number);
-        if (!v) return;
-
-        let currentIdx = v.stops.indexOf(getEffectiveNode());
-        if (currentIdx === -1) {
-          npcMsg(`Linija ${v.number} ne prolazi kroz tvoju trenutnu stanicu.`);
-          return;
-        }
-
-        inVehicle = v;
-        let newIdx = currentIdx + parsedCmd.count;
-        if (newIdx >= v.stops.length) newIdx = v.stops.length - 1;
-
-        v.currentStopIndex = newIdx;
-        v.positionNode = v.stops[newIdx];
-        playerNode = v.stops[newIdx];
-        inVehicle = null;
-        const b = getBuildingByNode(playerNode);
-        npcMsg(`Voziš se sa linijom ${v.number} za ${parsedCmd.count} stanica. Sada si kod: ${b ? b.nameSr : 'raskrsnice'}.`);
-        checkGoal();
-      }
-      // Bazične komande prevoza
-      else if (parsedCmd.action === 'enterVehicle') {
-        const node = getEffectiveNode();
-        const veh = vehicles.find(v => v.positionNode === node);
-        if (!veh) { npcMsg('Ovde nema vozila.'); return; }
-        inVehicle = veh;
-        npcMsg(`Ušao/la si u ${veh.type} ${veh.number}.`);
-      }
-      else if (parsedCmd.action === 'exitVehicle') {
-        if (!inVehicle) { npcMsg('Nisi u vozilu.'); return; }
-        if (parsedCmd.buildingName) {
-          const b = findBuildingByName(parsedCmd.buildingName);
-          if (!b) { npcMsg('Ne znam tu zgradu.'); return; }
-          const targetIdx = inVehicle.stops.indexOf(b.nodeId);
-          if (targetIdx !== -1) {
-            inVehicle.currentStopIndex = targetIdx;
-            inVehicle.positionNode = b.nodeId;
-            playerNode = b.nodeId;
-            inVehicle = null;
-            npcMsg(`Izašao/la si kod ${b.nameSrGen}. ` + describeLocation());
-            checkGoal();
-          } else { npcMsg('Ta zgrada nije na ovoj liniji.'); }
-        } else {
-          playerNode = inVehicle.positionNode; inVehicle = null;
-          npcMsg('Izašao/la si iz vozila. ' + describeLocation());
-          checkGoal();
-        }
-      }
-      else if (parsedCmd.action === 'travelStops') {
-        if (!inVehicle) { npcMsg('Prvo uđi u vozilo.'); return; }
-        let newIdx = inVehicle.currentStopIndex + parsedCmd.count;
-        if (newIdx >= inVehicle.stops.length) newIdx = inVehicle.stops.length - 1;
-        inVehicle.currentStopIndex = newIdx;
-        inVehicle.positionNode = inVehicle.stops[newIdx];
-        playerNode = inVehicle.positionNode;
-        const b = getBuildingByNode(inVehicle.positionNode);
-        npcMsg(`Vozio/la si se. Sada si kod ${b ? b.nameSrGen : 'raskrsnice'}.`);
-      }
-    }
-
-    function processCommand(rawInput) {
-      userMsg(rawInput);
-      const tokenSequences = parseSequence(rawInput);
-
-      if (tokenSequences.length > 1) {
-        sequenceQueue = tokenSequences.map(tokens => parseSingleCommand(tokens, tokens.join(' '))).filter(c => c);
-        isProcessingSequence = true;
-        processNextInSequence();
+      // Check if player is on that street
+      if (!street.tiles.has(`${playerX},${playerY}`)) {
+        npcMsg('Izvini, ne znam kako da dodjem do te ulice.');
         return;
       }
 
-      const singleTokens = tokenize(rawInput);
-      const parsed = parseSingleCommand(singleTokens, rawInput);
-
-      if (!parsed) {
-        const suggestion = findSuggestion(rawInput);
-        if (suggestion) {
-          pendingCorrection = { original: rawInput, corrected: suggestion };
-          npcMsg(`Da li ste mislili na "${suggestion}"?`);
-          yesnoDiv.style.display = 'flex';
-          userInput.disabled = true;
-          sendBtn.disabled = true;
-          return;
-        }
-        npcMsg('Izvini, nisam te razumeo. 😕 Pokušaj ponovo ili kucaj "pomoć" za listu mogućnosti.');
+      // Find destination building
+      const destLower = destPhrase.toLowerCase();
+      const building = buildings.find(b => 
+        b.genitive.toLowerCase() === destLower || b.name.toLowerCase() === destLower
+      );
+      if (!building) {
+        npcMsg(`Izvini, ne prepoznajem zgradu "${destPhrase}".`);
         return;
       }
 
-      executeCommand(parsed);
+      // Verify building is on this street
+      if (!street.buildings.some(b => b === building)) {
+        npcMsg(`Izvini, nema ${building.genitive} u ${streetName} ulici.`);
+        return;
+      }
+
+      // Move player to that building
+      playerX = building.x;
+      playerY = building.y;
       drawMap();
+      npcMsg(`Dobro, idemo ${streetPhrase} do ${building.genitive}.`);
+      checkGoal();
     }
 
-    function processNextInSequence() {
-      if (!isProcessingSequence || sequenceQueue.length === 0) {
-        isProcessingSequence = false;
-        drawMap();
-        return;
-      }
-      const cmd = sequenceQueue.shift();
-      executeCommand(cmd);
-      drawMap();
-      if (sequenceQueue.length > 0) {
-        setTimeout(() => processNextInSequence(), 600);
-      } else {
-        isProcessingSequence = false;
-      }
-    }
-
-    function findSuggestion(input) {
-      const clean = input.trim().toLowerCase();
-      const samples = ['idi pravo','idi levo','idi desno','idi nazad','pogledaj'];
-      let best=null, dist=Infinity;
-      for(const s of samples){
-        const d = levenshtein(clean,s);
-        if(d<dist && d<=3){ dist=d; best=s; }
-      }
-      return best;
-    }
-
-    function levenshtein(a,b) {
-      const m = Array(b.length+1).fill(null).map(()=>Array(a.length+1).fill(null));
-      for (let i=0;i<=b.length;i++) m[i][0]=i;
-      for (let j=0;j<=a.length;j++) m[0][j]=j;
-      for (let i=1;i<=b.length;i++)
-        for (let j=1;j<=a.length;j++)
-          m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[j-1]===b[i-1]?0:1));
-      return m[b.length][a.length];
-    }
-
-    function drawMap(){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      drawRoads();
-      if(mode==='hard') drawVehicleLines();
-      drawBuildings();
-      drawPlayer();
-      if(mode==='hard') drawVehicles();
-    }
-
-    function drawRoads(){
-      const drawn = new Set();
-      edges.forEach(e=>{
-        const key = [e.from,e.to].sort().join('-');
-        if(drawn.has(key)) return;
-        drawn.add(key);
-        const f=getNode(e.from), t=getNode(e.to);
-        if(f&&t){
-          ctx.strokeStyle='#b0a68f';
-          ctx.lineWidth=8;
-          ctx.beginPath();
-          ctx.moveTo(f.x,f.y);
-          ctx.lineTo(t.x,t.y);
-          ctx.stroke();
-
-          // Naziv ulice
-          if (e.name) {
-            ctx.fillStyle='#5c5343';
-            ctx.font='bold 10px "Segoe UI"';
-            ctx.textAlign='center';
-            const mx = (f.x+t.x)/2, my = (f.y+t.y)/2;
-            ctx.fillText(e.name, mx, my-8);
-          }
-        }
-      });
-    }
-
-    function drawVehicleLines(){
-      vehicleLines.forEach(line=>{
-        ctx.setLineDash([6,6]);
-        ctx.strokeStyle=line.color;
-        ctx.lineWidth=3;
-        ctx.beginPath();
-        const points=line.stops.map(id=>getNode(id)).filter(n=>n);
-        if(points.length>1){
-          ctx.moveTo(points[0].x,points[0].y);
-          for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x,points[i].y);
-          ctx.stroke();
-        }
-        ctx.setLineDash([]);
-      });
-    }
-
-    function drawBuildings(){
-      buildings.forEach(b=>{
-        const node=getNode(b.nodeId);
-        if(!node) return;
-        const x=node.x, y=node.y;
-        ctx.fillStyle='#c48b5c';
-        ctx.fillRect(x-30, y-24, 60, 32);
-        ctx.fillStyle='#8b5a2b';
-        ctx.fillRect(x-26, y-20, 52, 24);
-        ctx.fillStyle='white';
-        ctx.font='bold 9px "Segoe UI"';
-        ctx.textAlign='center';
-        ctx.fillText(b.nameSr, x, y-28);
-        b.hitRect={x:x-30, y:y-35, w:60, h:50};
-      });
-    }
-
-    function drawPlayer(){
-      const activeNode = getEffectiveNode();
-      const node=getNode(activeNode);
-      if(!node) return;
-      
-      ctx.save();
-      ctx.translate(node.x,node.y);
-      ctx.fillStyle='#ffcc00';
-      ctx.beginPath();
-      ctx.rotate((playerOrientation*Math.PI)/2 - Math.PI/2);
-      ctx.moveTo(0,-18);
-      ctx.lineTo(10,0);
-      ctx.lineTo(-10,0);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-
-      ctx.fillStyle='#d94f4f';
-      ctx.beginPath();
-      ctx.arc(node.x,node.y,14,0,2*Math.PI);
-      ctx.fill();
-      ctx.fillStyle='white';
-      ctx.font='16px sans-serif';
-      ctx.textAlign='center';
-      ctx.fillText(inVehicle ? '🚌' : '🧑',node.x,node.y+5);
-    }
-
-    function drawVehicles(){
-      vehicles.forEach(v=>{
-        const node=getNode(v.positionNode);
-        if(!node) return;
-        const vx=node.x+32, vy=node.y+14;
-        ctx.fillStyle=v.color;
-        ctx.beginPath();
-        ctx.ellipse(vx,vy-2,16,10,0,0,Math.PI*2);
-        ctx.fill();
-        ctx.fillStyle='white';
-        ctx.font='bold 10px sans-serif';
-        ctx.textAlign='center';
-        ctx.fillText(v.number,vx,vy-5);
-      });
-    }
-
-    canvas.addEventListener('click',(e)=>{
-      const rect=canvas.getBoundingClientRect();
-      const scaleX=canvas.width/rect.width;
-      const scaleY=canvas.height/rect.height;
-      const mx=(e.clientX-rect.left)*scaleX;
-      const my=(e.clientY-rect.top)*scaleY;
-      for(let b of buildings){
-        if(b.hitRect && mx>=b.hitRect.x && mx<=b.hitRect.x+b.hitRect.w && my>=b.hitRect.y && my<=b.hitRect.y+b.hitRect.h){
-          translationHint.textContent=`📖 ${b.nameSr} = ${b.nameEn}`;
-          return;
-        }
-      }
-    });
-
-    function switchMode(newMode){
-      mode=newMode;
-      document.getElementById('easyModeBtn').classList.toggle('active',mode==='easy');
-      document.getElementById('hardModeBtn').classList.toggle('active',mode==='hard');
-      pendingCorrection=null; yesnoDiv.style.display='none';
-      userInput.disabled=false; sendBtn.disabled=false;
-      sequenceQueue = []; isProcessingSequence = false;
-      
-      if(mode==='easy') buildEasyMap(); else buildHardMap();
-      drawMap();
-      messagesDiv.innerHTML='';
-      npcMsg('Zdravo! Gde idemo danas? Slobodno koristi napredne komande prevoza u teškoj verziji!');
-      userInput.focus();
-    }
-
-    document.getElementById('easyModeBtn').addEventListener('click',()=>switchMode('easy'));
-    document.getElementById('hardModeBtn').addEventListener('click',()=>switchMode('hard'));
-
-    sendBtn.addEventListener('click',()=>{
-      if(userInput.value.trim()==='') return;
-      processCommand(userInput.value.trim());
-      userInput.value='';
-      if(!pendingCorrection) userInput.focus();
-    });
-    userInput.addEventListener('keypress',(e)=>{ if(e.key==='Enter') sendBtn.click(); });
-
-    yesBtn.addEventListener('click',()=>{
+    // ---------- CORRECTION DIALOG ----------
+    yesBtn.addEventListener('click', () => {
       if (pendingCorrection) {
         const corrected = pendingCorrection.corrected;
-        pendingCorrection = null; yesnoDiv.style.display = 'none';
-        userInput.disabled = false; sendBtn.disabled = false;
+        pendingCorrection = null;
+        yesnoDiv.style.display = 'none';
+        userInput.disabled = false;
+        sendBtn.disabled = false;
         processCommand(corrected);
       }
     });
-    noBtn.addEventListener('click',()=>{
-      pendingCorrection = null; yesnoDiv.style.display = 'none';
-      userInput.disabled = false; sendBtn.disabled = false;
+    noBtn.addEventListener('click', () => {
+      pendingCorrection = null;
+      yesnoDiv.style.display = 'none';
+      userInput.disabled = false;
+      sendBtn.disabled = false;
       npcMsg('U redu, pokušaj ponovo.');
-      userInput.value = ''; userInput.focus();
+      userInput.value = '';
+      userInput.focus();
     });
 
-    buildEasyMap();
+    function askCorrection(original, corrected) {
+      pendingCorrection = { corrected };
+      yesnoText.textContent = `Da li ste mislili "${corrected}"?`;
+      yesnoDiv.style.display = 'flex';
+      userInput.disabled = true;
+      sendBtn.disabled = true;
+    }
+
+    // ---------- MODE SWITCH ----------
+    function switchMode(mode) {
+      currentMode = mode;
+      gameOver = false;
+      sequenceQueue = [];
+      isProcessingSequence = false;
+      userInput.disabled = false;
+      sendBtn.disabled = false;
+      yesnoDiv.style.display = 'none';
+      pendingCorrection = null;
+
+      buildMap(mode);
+      drawMap();
+      messagesDiv.innerHTML = '';
+      const goalMsg = goalBuilding ? ` do ${goalBuilding.genitive}` : '';
+      npcMsg(`Zdravo! Da li znate da mi kazete put${goalMsg}?`);
+      userInput.focus();
+    }
+
+    document.getElementById('easyModeBtn').addEventListener('click', () => switchMode('easy'));
+    document.getElementById('hardModeBtn').addEventListener('click', () => switchMode('hard'));
+
+    sendBtn.addEventListener('click', () => {
+      if (userInput.value.trim() === '') return;
+      processCommand(userInput.value.trim());
+      userInput.value = '';
+      if (!pendingCorrection) userInput.focus();
+    });
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
+
+    // Start with easy map
+    buildMap('easy');
     drawMap();
-    npcMsg('Zdravo! Nalazim se na Autobuskoj stanici na samom jugu mape i okrenut sam ka severu. Odvedi me do cilja!');
+    npcMsg(`Zdravo! Da li znate da mi kazete put do ${goalBuilding.genitive}?`);
+    userInput.focus();
   })();
 </script>
 </body>
